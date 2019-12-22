@@ -6,6 +6,7 @@ import (
 
 type QueueEngine struct {
 	Scheduler   Scheduler
+	ItemChan    chan interface{}
 	WorkerCount int
 }
 type ReadyInter interface {
@@ -25,7 +26,7 @@ func (e *QueueEngine) Run(seeds ...Request) {
 	for {
 		res := <-out
 		for _, item := range res.Items {
-			log.Printf("GOT %d item %v", sum, item)
+			e.ItemChan <- item
 			sum++
 		}
 		for _, request := range res.Requests {
@@ -36,7 +37,7 @@ func (e *QueueEngine) Run(seeds ...Request) {
 
 /**
  * 把ready这个方法独立成一个接口,代码就简单了
-因为Simple没有ready,只有Queue有0
+因为Simple没有ready,只有Queue有
 */
 func createQueueWorker(myChan chan Request, out chan Result, s ReadyInter) {
 	go func() {

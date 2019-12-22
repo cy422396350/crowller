@@ -31,7 +31,6 @@ func (s SimpleEngine) Run(seeds ...Request) {
 }
 
 func worker(r Request) (Result, error) {
-	log.Println(r.Url)
 	bytes, e := fetch.Fetch(r.Url)
 	if e != nil {
 		log.Printf("出错了%v%v", e, r.Url)

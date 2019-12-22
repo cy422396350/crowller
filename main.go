@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/cy422396350/crowller/engine"
+	"github.com/cy422396350/crowller/itemServer"
 	"github.com/cy422396350/crowller/scheduler"
 	"github.com/cy422396350/crowller/zhenai/parser"
 )
@@ -13,6 +14,7 @@ func main() {
 	e := &engine.QueueEngine{
 		Scheduler:   &scheduler.QueueScheduler{},
 		WorkerCount: 5,
+		ItemChan:    itemServer.CreateItemServer(),
 	}
 	//e.Run(engine.Request{Url:seed,Parser:parser.ParserCityList})
 	e.Run(engine.Request{
