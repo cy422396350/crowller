@@ -1,10 +1,10 @@
 package model
 
 type Profile struct {
-	Name      string
-	Age       int
-	Education string
-	Marige    string
-	Income    string
-	Mmdes     string
+	Name      string `json:"name"`
+	Age       int    `json:"age"`
+	Education string `json:"education"`
+	Marige    string `json:"marige"`
+	Income    string `json:"income"`
+	Mmdes     string `json:"mmdes"`
 }

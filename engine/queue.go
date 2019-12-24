@@ -25,13 +25,17 @@ func (e *QueueEngine) Run(seeds ...Request) {
 	sum := 0
 	for {
 		res := <-out
-		for _, item := range res.Items {
-			e.ItemChan <- item
-			sum++
+		if res.Requests == nil {
+			for _, item := range res.Items {
+				e.ItemChan <- item
+				log.Printf("get item %d,item is %v", sum, item)
+				sum++
+			}
 		}
 		for _, request := range res.Requests {
 			e.Scheduler.Submit(request)
 		}
+
 	}
 }
 

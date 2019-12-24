@@ -30,7 +30,8 @@ func ParserProfile(contents []byte, name string) engine.Result {
 	}
 
 	results := engine.Result{
-		Items: []interface{}{f},
+		Requests: nil,
+		Items:    []interface{}{f},
 	}
 
 	return results
