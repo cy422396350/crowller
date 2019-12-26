@@ -6,7 +6,7 @@ import (
 
 type QueueEngine struct {
 	Scheduler   Scheduler
-	ItemChan    chan interface{}
+	ItemChan    chan Item
 	WorkerCount int
 }
 type ReadyInter interface {
@@ -28,7 +28,7 @@ func (e *QueueEngine) Run(seeds ...Request) {
 		if res.Requests == nil {
 			for _, item := range res.Items {
 				e.ItemChan <- item
-				log.Printf("get item %d,item is %v", sum, item)
+				log.Printf("get item %d\n", sum)
 				sum++
 			}
 		}

@@ -17,10 +17,10 @@ func FindPeople(contents []byte) engine.Result {
 	result := engine.Result{}
 	for _, man := range people {
 		name := man[2]
-		result.Requests = append(result.Requests, engine.Request{Url: man[1], Parser: func(bytes []byte) engine.Result {
-			return ParserProfile(bytes, name)
+		url := man[1]
+		result.Requests = append(result.Requests, engine.Request{Url: url, Parser: func(bytes []byte) engine.Result {
+			return ParserProfile(bytes, name, url)
 		}})
-		result.Items = append(result.Items, man[2])
 	}
 	for _, man := range otherPeople {
 		result.Requests = append(result.Requests, engine.Request{Url: man[1], Parser: func(bytes []byte) engine.Result {

@@ -5,33 +5,40 @@ import (
 	"github.com/cy422396350/crowller/zhenai/model"
 	"log"
 	"regexp"
-	"strconv"
 )
 
-var AgeStr = regexp.MustCompile(`<div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>[^<]+</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([0-9]+)岁</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div><div class="m-btn [a-z0-9A-Z]+" data-v-[\w]+>([^<]+)</div>`)
-var Mdes = regexp.MustCompile(`<div class="m-content-box m-des" data-v-[\w]+><span data-v-[\w]+>([^<]+)</span></div>`)
+var profile = regexp.MustCompile(`<div [^>]+> ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+)元`)
 
-func ParserProfile(contents []byte, name string) engine.Result {
+var idReg = regexp.MustCompile(`http://album.zhenai.com/u/([\d]+)`)
+
+func ParserProfile(contents []byte, name string, url string) engine.Result {
 	if contents == nil {
 		log.Println("xxx")
 	}
-	f := model.Profile{}
-	f.Name = name
-	res := AgeStr.FindStringSubmatch(string(contents))
-	mResult := Mdes.FindStringSubmatch(string(contents))
-	if len(res) > 0 {
-		f.Age, _ = strconv.Atoi(res[1])
-		f.Education = res[3]
-		f.Marige = res[4]
-		f.Income = res[5]
-	}
-	if len(mResult) > 1 {
-		f.Mmdes = mResult[1]
+	id := idReg.FindStringSubmatch(url)
+	res := profile.FindAllStringSubmatch(string(contents), -1)
+	if len(res) < 1 {
+		log.Println(res, "res len <6,url is"+url)
+		return engine.Result{}
 	}
 
 	results := engine.Result{
 		Requests: nil,
-		Items:    []interface{}{f},
+		Items: []engine.Item{
+			{
+				Url:  url,
+				Type: "zhenai",
+				Id:   id[1],
+				Profile: model.Profile{
+					Name:      name,
+					Age:       res[0][2],
+					Education: res[0][3],
+					Marige:    res[0][4],
+					Height:    res[0][5],
+					Income:    res[0][6],
+				},
+			},
+		},
 	}
 
 	return results

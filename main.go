@@ -8,17 +8,19 @@ import (
 )
 
 const seed = "http://www.zhenai.com/zhenghun"
-const shanghai = "http://www.zhenai.com/zhenghun/shanghai"
 
 func main() {
+	saver, err := itemServer.CreateItemServer("dating")
+
+	if err != nil {
+		panic(err)
+	}
+
 	e := &engine.QueueEngine{
 		Scheduler:   &scheduler.QueueScheduler{},
 		WorkerCount: 5,
-		ItemChan:    itemServer.CreateItemServer(),
+		ItemChan:    saver,
 	}
-	//e.Run(engine.Request{Url:seed,Parser:parser.ParserCityList})
-	e.Run(engine.Request{
-		Url:    shanghai,
-		Parser: parser.FindPeople,
-	})
+
+	e.Run(engine.Request{Url: seed, Parser: parser.ParserCityList})
 }
