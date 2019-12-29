@@ -13,15 +13,23 @@ type ReadyInter interface {
 	Ready(chan Request)
 }
 
+var requested = make(map[string]bool)
+
 func (e *QueueEngine) Run(seeds ...Request) {
 	out := make(chan Result)
 	e.Scheduler.Run()
 	for i := 0; i < e.WorkerCount; i++ {
 		createQueueWorker(e.Scheduler.GetWorkerChan(), out, e.Scheduler)
 	}
+
 	for _, request := range seeds {
-		e.Scheduler.Submit(request)
+		if !requested[request.Url] {
+			requested[request.Url] = true
+
+			e.Scheduler.Submit(request)
+		}
 	}
+
 	sum := 0
 	for {
 		res := <-out
@@ -33,7 +41,10 @@ func (e *QueueEngine) Run(seeds ...Request) {
 			}
 		}
 		for _, request := range res.Requests {
-			e.Scheduler.Submit(request)
+			if !requested[request.Url] {
+				requested[request.Url] = true
+				e.Scheduler.Submit(request)
+			}
 		}
 
 	}

@@ -1,6 +1,8 @@
 package scheduler
 
-import "github.com/cy422396350/crowller/engine"
+import (
+	"github.com/cy422396350/crowller/engine"
+)
 
 type QueueScheduler struct {
 	Request  chan engine.Request

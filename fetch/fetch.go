@@ -20,7 +20,7 @@ func getEncoding(reader *bufio.Reader) (determineEncoding encoding.Encoding) {
 	return
 }
 
-var limit = time.Tick(50 * time.Millisecond)
+var limit = time.Tick(50 * time.Microsecond)
 
 func Fetch(url string) ([]byte, error) {
 	<-limit
