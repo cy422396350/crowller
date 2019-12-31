@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/cy422396350/crowller/config"
 	"github.com/cy422396350/crowller/engine"
 	"github.com/cy422396350/crowller/itemServer"
 	"github.com/cy422396350/crowller/scheduler"
@@ -10,7 +12,7 @@ import (
 const seed = "http://www.zhenai.com/zhenghun"
 
 func main() {
-	saver, err := itemServer.CreateItemServer("dating")
+	saver, err := itemServer.CreateItemServer(fmt.Sprintf(":%d", config.Host))
 
 	if err != nil {
 		panic(err)

@@ -11,11 +11,11 @@ import (
 
 type SaveItem struct {
 	Client *elastic.Client
-	Item   engine.Item
+	Index  string
 }
 
-func (s *SaveItem) Save(index string, result *string) (err error) {
-	_, err = s.Client.Index().Index(index).Type(s.Item.Type).Id(s.Item.Id).BodyJson(s.Item).Do(context.Background())
+func (s *SaveItem) Save(item engine.Item, result *string) (err error) {
+	_, err = s.Client.Index().Index(s.Index).Type(item.Type).Id(item.Id).BodyJson(item).Do(context.Background())
 	if err != nil {
 		return err
 	}
@@ -24,14 +24,13 @@ func (s *SaveItem) Save(index string, result *string) (err error) {
 }
 
 // 启动一个jsonRpc的服务器
-func Serve(host string, service interface{}, c chan bool) (err error) {
+func Serve(host string, service interface{}) (err error) {
 	rpc.Register(service)
 	listen, err := net.Listen("tcp", host)
 	if err != nil {
 		return
 	}
 	for {
-		c <- true
 		conn, err := listen.Accept()
 		if err != nil {
 			return err

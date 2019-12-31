@@ -21,7 +21,7 @@ func TestSave(t *testing.T) {
 	}
 	turnOn := make(chan bool)
 	// 启动一个服务
-	go supportRpc.Serve(host, &supportRpc.SaveItem{newClient, item}, turnOn)
+	go supportRpc.Serve(host, &supportRpc.SaveItem{newClient, "item"}, turnOn)
 	<-turnOn
 	// 用客户端连服务
 	client, err := supportRpc.GetClient(host)
@@ -30,7 +30,7 @@ func TestSave(t *testing.T) {
 	}
 	result := ""
 	// call 存进去
-	err = client.Call("SaveItem.Save", "test_data", &result)
+	err = client.Call("SaveItem.Save", item, &result)
 	if err != nil || result != "ok" {
 		t.Errorf("err is %v", err)
 	}

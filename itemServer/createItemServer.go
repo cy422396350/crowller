@@ -2,28 +2,28 @@ package itemServer
 
 import (
 	"context"
+	"github.com/cy422396350/crowller/config"
 	"github.com/cy422396350/crowller/engine"
+	"github.com/cy422396350/crowller/rpc/supportRpc"
 	"gopkg.in/olivere/elastic.v5"
 	"log"
 )
 
-func CreateItemServer(index string) (chan engine.Item, error) {
-	client, err := elastic.NewClient(
-		elastic.SetURL("http://47.104.141.245:9200"),
-		//false in docker
-		elastic.SetSniff(false),
-	)
+func CreateItemServer(host string) (chan engine.Item, error) {
+	client, err := supportRpc.GetClient(host)
 	if err != nil {
 		return nil, err
 	}
+
 	out := make(chan engine.Item)
 	go func() {
 		for {
 			item := <-out
 			//log.Print(item,"\n")
-			_, err := save(item, client, index)
-			if err != nil {
-				log.Printf("item save err %v item is %v \n", err, item)
+			result := ""
+			err2 := client.Call(config.Service_name, item, &result)
+			if err2 != nil || result != "ok" {
+				log.Println(err2)
 			}
 		}
 	}()
